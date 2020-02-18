@@ -3,10 +3,11 @@ import "./User.css";
 import { hashContext } from "../../../Context/apiContext";
 
 function User(props) {
+  const id = props.match.params.id;
   const appContext = useContext(hashContext);
   const { itemsInfo, showLoading } = appContext;
-  const id = props.match.params.id;
   const [usersInfo, setUserInfo] = useState([]);
+  const [charInfo, setCharInfo] = useState([]);
   const userInfo = useCallback(async () => {
     const res = await fetch(
       `https://www.bungie.net/Platform/Destiny2/3/Profile/${id}/?components=200,205,400`,
@@ -20,6 +21,7 @@ function User(props) {
     );
     const resJson = await res.json();
     setUserInfo(resJson.Response.characterEquipment.data);
+    setCharInfo(resJson.Response.characters.data);
   }, [id]);
   useEffect(() => {
     userInfo();
@@ -32,9 +34,9 @@ function User(props) {
       {showLoading ? (
         <div>Loading...</div>
       ) : (
-        Object.keys(usersInfo).map((e, i) => (
+        Object.keys(charInfo).map((e, i) => (
           <div>
-            **************
+            ************** LIGHT : {charInfo[e].light} **************
             {usersInfo[e].items.map((e, i) => {
               return <div>{itemsInfo[e.itemHash].displayProperties.name}</div>;
             })}
